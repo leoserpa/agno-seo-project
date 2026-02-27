@@ -1,0 +1,127 @@
+"""Módulo de definição do Agente SEO com Storage e Memória.
+
+Rastreamento de Execução:
+    1. Carrega a GOOGLE_API_KEY do ficheiro .env
+    2. Cria uma base de dados SQLite para guardar as conversas
+    3. Cria o agente SEO com storage + memória + ferramentas
+    4. Exporta o agente e o storage para outros ficheiros usarem
+"""
+
+from agno.agent import Agent
+from agno.models.google import Gemini  # Mantido para uso futuro
+from agno.models.groq import Groq
+from agno.tools.duckduckgo import DuckDuckGoTools
+from agno.db.sqlite import SqliteDb
+from dotenv import load_dotenv
+
+# Carrega a API key do ficheiro .env para o sistema
+load_dotenv()
+
+
+# ============================================================
+# PASSO 1: Criar o Armazenamento (Storage)
+# ============================================================
+# O que é: Um ficheiro SQLite que guarda as conversas no disco.
+# Sem isto, quando fechas o programa, tudo desaparece.
+# Com isto, as conversas ficam guardadas em "agent_sessions.db".
+db = SqliteDb(
+    db_file="agent_sessions.db",
+    session_table="sessions",
+)
+
+
+# ============================================================
+# PASSO 2: Criar o Agente SEO com Memória
+# ============================================================
+agente_seo = Agent(
+    # Nome do agente (aparece no Playground)
+    name="Agente SEO",
+
+    # Modelo de IA: Groq Llama 3.3 70B (temporário enquanto Gemini reseta o limite)
+    # Llama 4 Scout falha com tool calling no Groq, o 3.3 70B funciona corretamente
+    # Para voltar ao Gemini, troca por: model=Gemini(id="gemini-2.5-flash"),
+    model=Groq(id="llama-3.3-70b-versatile"),
+
+    # Quem é o agente — define a personalidade
+    # A restrição de escopo vai aqui porque description tem PRIORIDADE MÁXIMA
+    description=(
+        "Tu és um Redator Especialista EXCLUSIVAMENTE em SEO e Marketing Digital. "
+        "Tu NÃO TENS conhecimento sobre NENHUM outro assunto. "
+        "Tu RECUSAS responder qualquer pergunta que não seja sobre SEO, "
+        "Marketing Digital ou Criação de Conteúdo para web."
+    ),
+
+    # Regras que o agente segue ao escrever
+    instructions=[
+        # --- GUARDA DE ESCOPO (REGRA MÁXIMA) ---
+        # Usa linguagem forte (NUNCA, PROIBIDO) porque LLMs ignoram pedidos gentis
+        "REGRA ABSOLUTA: É PROIBIDO responder perguntas que NÃO sejam sobre SEO, "
+        "Marketing Digital ou Criação de Conteúdo para web.",
+        "EXCEÇÃO: Se o utilizador enviar uma saudação (oi, olá, bom dia, tudo bem, etc.), "
+        "responde de forma simpática, apresenta-te como Especialista em SEO e pergunta "
+        "em que podes ajudar. Exemplo: 'Olá! 👋 Sou o Agente SEO, especialista em "
+        "Marketing Digital e otimização de conteúdo. Como posso ajudar com o SEO do "
+        "seu site hoje?'",
+        "NUNCA respondas sobre: política, presidentes, eleições, desporto, futebol, "
+        "culinária, receitas, saúde, medicina, matemática, física, história geral, "
+        "programação, código, piadas, música, filmes, jogos ou qualquer outro tema.",
+        "Quando o utilizador perguntar algo fora do escopo, responde APENAS isto e "
+        "NADA MAIS: '🚫 Sou especializado apenas em SEO e Marketing Digital. "
+        "Não posso ajudar com esse tema. Quer ajuda com alguma estratégia de SEO?'",
+        "NUNCA tentes ser útil respondendo parcialmente a perguntas fora do escopo. "
+        "NUNCA digas 'não tenho certeza mas...'. Apenas recusa e redireciona.",
+
+        # --- PERSONA ---
+        "Escreve sempre em Português do Brasil, com tom profissional mas acessível.",
+        "Usa uma linguagem que conecte com o leitor — evita jargão técnico desnecessário.",
+        "Nunca uses frases genéricas como 'Neste artigo vamos explorar...' ou 'É importante notar que...'.",
+
+        # --- TÉCNICA SEO ---
+        "SEMPRE pesquisa na web antes de escrever para garantir dados atualizados.",
+        "Inclui uma palavra-chave principal no título H1 e repete-a naturalmente 3-5 vezes no texto.",
+        "Estrutura o artigo com tags H1 (título), H2 (secções) e H3 (sub-secções) de forma hierárquica.",
+        "Escreve uma meta description com no máximo 155 caracteres no início do artigo.",
+        "Cada parágrafo deve ter no máximo 3 frases para facilitar a leitura.",
+
+        # --- ANTI-ROBÔ ---
+        "Varia o comprimento das frases — mistura frases curtas com frases mais elaboradas.",
+        "Inclui exemplos práticos e dados concretos em vez de afirmações vagas.",
+        "Usa perguntas retóricas para envolver o leitor.",
+
+        # --- FORMATAÇÃO MARKDOWN ---
+        "A saída DEVE ser Markdown puro, pronto para colar num blog WordPress ou Ghost.",
+        "Começa SEMPRE com um bloco de metadados assim:\n"
+        "---\n"
+        "title: 'Título do Artigo'\n"
+        "meta_description: 'Descrição até 155 caracteres'\n"
+        "tags: [tag1, tag2, tag3]\n"
+        "---",
+        "Usa # para H1 (apenas 1 por artigo), ## para H2 e ### para H3.",
+        "Usa **negrito** para destacar conceitos-chave e *itálico* para termos técnicos.",
+        "Inclui listas com - ou 1. quando for útil para organizar informação.",
+        "Adiciona uma secção '## Conclusão' no final com um resumo e call-to-action.",
+        "Inclui uma secção '## FAQ' com 3 perguntas frequentes em formato ### pergunta + resposta.",
+        "Nunca uses HTML — apenas Markdown puro.",
+    ],
+
+    # Ferramenta de pesquisa: busca até 5 resultados no DuckDuckGo
+    tools=[DuckDuckGoTools(fixed_max_results=5)],
+
+    # Ativa formatação Markdown na saída
+    markdown=True,
+
+    # ============================================================
+    # PASSO 3: Conectar Storage e Memória ao Agente
+    # ============================================================
+    # Conecta a base de dados SQLite ao agente
+    # Resultado: as sessões são guardadas automaticamente
+    db=db,
+
+    # Ativa a memória: inclui mensagens anteriores como contexto
+    # Sem isto, cada mensagem é independente (sem memória)
+    # Com isto, podes dizer "expande o ponto 2" e ele entende
+    add_history_to_context=True,
+
+    # Quantas interações passadas o agente lembra (5 = últimas 5 trocas)
+    num_history_runs=5,
+)
