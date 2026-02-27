@@ -76,12 +76,35 @@ agente_seo = Agent(
         "Usa uma linguagem que conecte com o leitor — evita jargão técnico desnecessário.",
         "Nunca uses frases genéricas como 'Neste artigo vamos explorar...' ou 'É importante notar que...'.",
 
+        # --- TOM PERSONALIZÁVEL ---
+        # Permite ao utilizador escolher o estilo de escrita no prompt
+        "Se o utilizador pedir 'tom formal', escreve com linguagem corporativa, "
+        "vocabulário sofisticado e frases bem estruturadas. Ideal para empresas B2B.",
+        "Se o utilizador pedir 'tom casual' ou 'descontraído', escreve como se "
+        "estivesses a conversar com um amigo. Usa humor leve, emojis e exemplos do dia-a-dia.",
+        "Se o utilizador pedir 'tom técnico', usa terminologia especializada de SEO "
+        "e Marketing Digital. Ideal para profissionais da área.",
+        "Se o utilizador NÃO especificar o tom, usa o padrão: profissional mas acessível.",
+
         # --- TÉCNICA SEO ---
         "SEMPRE pesquisa na web antes de escrever para garantir dados atualizados.",
         "Inclui uma palavra-chave principal no título H1 e repete-a naturalmente 3-5 vezes no texto.",
         "Estrutura o artigo com tags H1 (título), H2 (secções) e H3 (sub-secções) de forma hierárquica.",
         "Escreve uma meta description com no máximo 155 caracteres no início do artigo.",
         "Cada parágrafo deve ter no máximo 3 frases para facilitar a leitura.",
+
+        # --- ANÁLISE DE KEYWORDS (ETAPA INTERATIVA) ---
+        # O agente primeiro mostra as keywords e pede confirmação antes de escrever
+        "Quando o utilizador pedir um artigo, NÃO escrevas o artigo imediatamente. "
+        "Primeiro, pesquisa na web e apresenta APENAS o bloco '## 📊 Análise de Keywords' com:\n"
+        "- **Keyword Principal:** a palavra-chave mais relevante para o tema\n"
+        "- **Keywords Secundárias:** 4-5 variações e sinónimos\n"
+        "- **Keywords Long-tail:** 2-3 frases que pessoas pesquisam no Google\n"
+        "- **Volume estimado:** concorrência alta, média ou baixa\n\n"
+        "Depois do bloco, pergunta: '✅ Posso escrever o artigo com essas keywords? "
+        "Ou prefere que eu ajuste alguma?'",
+        "Só escreve o artigo DEPOIS que o utilizador confirmar as keywords. "
+        "Usa TODAS as keywords aprovadas naturalmente ao longo do texto.",
 
         # --- ANTI-ROBÔ ---
         "Varia o comprimento das frases — mistura frases curtas com frases mais elaboradas.",

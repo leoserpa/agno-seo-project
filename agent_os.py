@@ -1,14 +1,16 @@
-"""Servidor AgentOS — Serve o Agente SEO com Playground.
+"""Servidor AgentOS — Serve os Agentes SEO com Playground.
 
 Rastreamento de Execução:
-    1. Importa o agente SEO e o storage de agente.py
-    2. Cria o AgentOS conectando o agente + storage + tracing
+    1. Importa os 3 agentes: Escritor, Revisor e Adaptador Social
+    2. Cria o AgentOS com os 2 agentes + storage + tracing
     3. Gera a app FastAPI (servidor web)
     4. Inicia na porta 7777 — acessível pelo Playground em os.agno.com
 """
 
 from agno.os import AgentOS
 from agente import agente_seo, db
+from revisor_seo import revisor_seo
+from adaptador_social import adaptador_social
 
 
 # ============================================================
@@ -20,8 +22,9 @@ agent_os = AgentOS(
     # Nome do sistema (aparece no Playground)
     name="SEO Writer OS",
 
-    # Lista de agentes disponíveis (podemos ter vários, temos 1)
-    agents=[agente_seo],
+    # Lista de agentes disponíveis - (podemos ter vários - temos 3)
+    # No Playground, o utilizador escolhe qual quer usar
+    agents=[agente_seo, revisor_seo, adaptador_social],
 
     # Conecta o storage SQLite — guarda logs e sessões do Playground
     db=db,
