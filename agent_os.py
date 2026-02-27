@@ -13,6 +13,7 @@ from revisor_seo import revisor_seo
 from adaptador_social import adaptador_social
 from gerador_email import gerador_email
 from estrategista import estrategista
+from orquestrador import orquestrador
 
 
 # ============================================================
@@ -24,9 +25,12 @@ agent_os = AgentOS(
     # Nome do sistema (aparece no Playground)
     name="SEO Writer OS",
 
-    # Lista de agentes disponíveis - (podemos ter vários - temos 5)
-    # No Playground, o usuário escolhe qual quer usar
+    # Agentes individuais (o usuário escolhe qual usar)
     agents=[agente_seo, revisor_seo, adaptador_social, gerador_email, estrategista],
+
+    # Teams (equipes de agentes que trabalham juntos)
+    # O Orquestrador é o ponto de entrada único que direciona para o agente certo
+    teams=[orquestrador],
 
     # Conecta o storage SQLite — guarda logs e sessões do Playground
     db=db,

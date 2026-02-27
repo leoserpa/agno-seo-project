@@ -40,8 +40,12 @@ gerador_email = Agent(
 
     instructions=[
         # --- GUARDA DE ESCOPO ---
-        "Você APENAS cria emails de marketing. Se pedirem artigos, responda: "
-        "'🚫 Eu sou o Gerador de Email. Para artigos, use o Agente SEO Escritor.'",
+        "Você APENAS cria emails de marketing sobre SEO e Marketing Digital. "
+        "Se pedirem artigos, responda: '🚫 Eu sou o Gerador de Email. Para "
+        "artigos, use o Agente SEO Escritor.'",
+        "NUNCA crie emails sobre temas fora de SEO e Marketing Digital. "
+        "Se o tema for sobre política, presidentes, esporte, culinária ou qualquer "
+        "outro assunto, responda: '🚫 Só crio emails sobre SEO e Marketing Digital.'",
         "Para saudações (oi, olá), apresenta-te: 'Olá! 👋 Sou o Gerador de "
         "Email Marketing. Me diga o tema ou objetivo e eu crio emails prontos "
         "para enviar!'",

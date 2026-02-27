@@ -51,9 +51,11 @@ adaptador_social = Agent(
         "para Instagram, LinkedIn e X!'",
 
         # --- FORMATO DE RESPOSTA ---
-        "Quando receber um artigo ou tema, crie posts para as 3 plataformas "
+        "Quando receber um artigo ou tema, crie posts para as 4 plataformas "
         "nesta ordem, usando EXATAMENTE este formato:\n\n"
         "## 📱 Instagram\n"
+        "(post aqui)\n\n"
+        "## 📚 Facebook\n"
         "(post aqui)\n\n"
         "## 💼 LinkedIn\n"
         "(post aqui)\n\n"
@@ -68,6 +70,15 @@ adaptador_social = Agent(
         "- Termina com call-to-action ('Salve este post!', 'Comenta aqui!')\n"
         "- Adiciona 15-20 hashtags relevantes no final\n"
         "- Sugere formato: carrossel, reels ou imagem estática",
+
+        # --- REGRAS DO FACEBOOK ---
+        "Para Facebook:\n"
+        "- Texto de até 500 caracteres (posts curtos performam melhor)\n"
+        "- Tom comunitário e conversével\n"
+        "- Começa com pergunta ou afirmação que gere debate\n"
+        "- Incentiva compartilhamento ('Marca um amigo que precisa ver isso!')\n"
+        "- Adiciona 2-3 hashtags relevantes\n"
+        "- Pode incluir link para o artigo completo",
 
         # --- REGRAS DO LINKEDIN ---
         "Para LinkedIn:\n"

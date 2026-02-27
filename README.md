@@ -1,65 +1,108 @@
-# 🤖 Agente Escritor de SEO com Agno
+# 🤖 Sistema Multi-Agente de SEO e Marketing Digital
 
-Agente de IA que escreve artigos otimizados para SEO, com pesquisa em tempo real e formatação Markdown profissional.
+Sistema de IA com **5 agentes especializados + 1 orquestrador** para criação de conteúdo SEO, construído com o framework [Agno](https://agno.com).
 
-> 🚧 **Status: Em desenvolvimento** — O agente funciona, mas novas funcionalidades estão sendo adicionadas.
+## 🏗️ Arquitetura
 
-## Stack
+```
+                    💬 Assistente de SEO (Orquestrador)
+                              ↓ roteia
+          ┌───────────┬───────────┬───────────┬───────────┐
+          ↓           ↓           ↓           ↓           ↓
+     📅 Estrateg.  ✍️ Escritor  🔍 Revisor  📱 Social  📧 Email
+```
+
+| Agente | Arquivo | Função |
+|---|---|---|
+| � Estrategista | `estrategista.py` | Cria calendários de conteúdo |
+| ✍️ Escritor SEO | `agente.py` | Escreve artigos otimizados |
+| 🔍 Revisor SEO | `revisor_seo.py` | Avalia artigos (nota 0-100) |
+| 📱 Adaptador Social | `adaptador_social.py` | Posts para Instagram, Facebook, LinkedIn e X |
+| 📧 Gerador de Email | `gerador_email.py` | Newsletters e emails de vendas |
+| 🤖 Assistente de SEO | `orquestrador.py` | Direciona para o agente certo automaticamente |
+
+## ⚡ Funcionalidades
+
+- ✅ **5 agentes especializados** com guardas de escopo
+- ✅ **Orquestrador inteligente** (mode=route) — 1 ponto de entrada
+- ✅ **Análise de keywords** interativa (apresenta antes de escrever)
+- ✅ **Tom personalizável** — formal, casual ou técnico
+- ✅ **Pesquisa web em tempo real** via DuckDuckGo
+- ✅ **Memória de conversa** — lembra das últimas interações
+- ✅ **Storage SQLite** — sessões persistentes
+- ✅ **Playground web** via AgentOS
+
+## 🛠️ Stack
 
 - **Framework:** [Agno](https://agno.com) (Python)
-- **Modelo:** Gemini 2.5 Flash (Google AI Studio — gratuito)
-- **Pesquisa Web:** DuckDuckGo (via `DuckDuckGoTools`)
-- **Output:** Markdown pronto para WordPress / Ghost
+- **Modelo:** Groq Llama 3.3 70B (gratuito)
+- **Pesquisa:** DuckDuckGo
+- **Storage:** SQLite
+- **Interface:** AgentOS Playground / Streamlit (em breve)
 
-## Funcionalidades
+## 🚀 Como Usar
 
-- ✅ Pesquisa web em tempo real antes de escrever
-- ✅ Persona de Redator SEO com 10 anos de experiência
-- ✅ Estrutura SEO: H1/H2/H3, palavras-chave, meta description
-- ✅ Output Markdown com frontmatter YAML, conclusão e FAQ
-- ✅ Custo zero (tier gratuito do Gemini)
-
-## Como Usar
-
-### 1. Instalar dependências
+### 1. Clonar e instalar
 
 ```bash
+git clone https://github.com/leoserpa/agno-seo-project.git
+cd agno-seo-project
 uv sync
 ```
 
-### 2. Configurar API Key
+### 2. Configurar API Keys
 
-Cria um ficheiro `.env` na raiz do projeto:
+Crie um arquivo `.env` na raiz:
 
 ```
-GOOGLE_API_KEY=a_tua_chave_do_google_ai_studio
+GROQ_API_KEY=sua_chave_do_groq
+GOOGLE_API_KEY=sua_chave_do_google (opcional)
 ```
 
-Obtém a chave em: [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+Obtenha grátis em: [console.groq.com](https://console.groq.com)
 
-### 3. Executar
+### 3. Iniciar o servidor
 
 ```bash
-uv run python main.py
+uv run python agent_os.py
 ```
 
-## Estrutura
+### 4. Acessar o Playground
+
+Acesse [os.agno.com](https://os.agno.com) e conecte em `localhost:7777`.
+
+## 📁 Estrutura do Projeto
 
 ```
-├── main.py          # Agente SEO principal
-├── .env             # API keys (não versionado)
-├── .gitignore       # Exclui .env e .venv
-├── pyproject.toml   # Dependências do projeto
-└── README.md        # Este ficheiro
+├── agente.py            # ✍️ Agente Escritor SEO
+├── revisor_seo.py       # 🔍 Agente Revisor (nota 0-100)
+├── adaptador_social.py  # 📱 Adaptador de Redes Sociais
+├── gerador_email.py     # 📧 Gerador de Email Marketing
+├── estrategista.py      # 📅 Estrategista de Conteúdo
+├── orquestrador.py      # 🤖 Orquestrador (Team route)
+├── agent_os.py          # 🖥️ Servidor AgentOS
+├── main.py              # 🧪 Teste rápido no terminal
+├── .env                 # 🔑 API keys (não versionado)
+└── pyproject.toml       # 📦 Dependências
 ```
 
-## Roadmap
+## 📝 Exemplos de Uso
 
-- [ ] Receber o tema do artigo como argumento CLI
-- [ ] Salvar artigos gerados em ficheiros `.md`
-- [ ] Interface web com Agno Playground
-- [ ] Suporte a múltiplos idiomas
+**Escrever artigo:**
+> "Escreva um artigo sobre SEO para e-commerce, tom casual"
 
-## Licença
+**Revisar artigo:**
+> Cole o artigo e peça: "Avalie esse artigo"
+
+**Criar posts:**
+> "Crie posts sobre SEO local para redes sociais"
+
+**Criar email:**
+> "Crie uma newsletter sobre tendências de SEO 2026"
+
+**Planejar conteúdo:**
+> "Crie um calendário de conteúdo para uma agência de marketing"
+
+## 📄 Licença
 
 MIT
