@@ -22,9 +22,6 @@ __pycache__
 *.sqlite
 *.sqlite3
 
-# Arquivos de lock (dependências instaladas pelo pip diretamente)
-uv.lock
-
 # Arquivos do sistema
 .DS_Store
 Thumbs.db
