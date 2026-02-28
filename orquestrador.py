@@ -24,8 +24,9 @@ from agno.team import Team
 # TeamMode = enum que define o modo de funcionamento da equipe
 from agno.team.mode import TeamMode
 
-# Groq = modelo de IA que o líder usa para DECIDIR qual agente chamar
+# Groq = modelo de IA alternativo (mais barato)
 from agno.models.groq import Groq
+from agno.models.google import Gemini
 
 # Importa os 5 agentes que foi criado
 from agente import agente_seo          # ✍️ Escreve artigos
@@ -71,7 +72,7 @@ orquestrador = Team(
 
     # Modelo que o LÍDER usa para decidir qual agente chamar
     # (é uma chamada rápida e barata, só para decidir)
-    model=Groq(id="llama-3.3-70b-versatile"),
+    model=Gemini(id="gemini-2.5-flash"),
 
     # Os 5 agentes que o Orquestrador pode chamar
     members=[
@@ -86,13 +87,13 @@ orquestrador = Team(
     # Isso ajuda ele a decidir qual agente encaminhar
     instructions=[
         # GUARDA DE ESCOPO — VERIFICAR ANTES DE ROTEAR
-        "PRIORIDADE MÁXIMA: ANTES de encaminhar para qualquer agente, verifique "
-        "se o pedido é sobre SEO, Marketing Digital ou Criação de Conteúdo. "
-        "Se NÃO for, NUNCA encaminhe para nenhum agente. Responda você mesmo "
-        "APENAS com: '🚫 Nossa equipe é especializada apenas em SEO e Marketing "
-        "Digital. Quer ajuda com alguma estratégia de conteúdo?'",
-        "NUNCA encaminhe perguntas sobre: política, presidentes, esporte, culinária, "
-        "saúde, programação, matemática, história geral ou qualquer tema fora de SEO.",
+        "PRIORIDADE MÁXIMA: ANTES de encaminhar, verifique se o pedido exige criar "
+        "conteúdo, planejar marketing ou aplicar SEO para um negócio/nicho. "
+        "Você ACEITA pedidos para QUALQUER NICHO (ex: universidade, padaria, loja), "
+        "desde que o objetivo seja Marketing Digital ou Criação de Conteúdo para eles.",
+        "Se o pedido for uma PERGUNTA GERAL que NÃO envolve criar conteúdo "
+        "(ex: 'quem é o presidente?', 'como fazer bolo?', 'quanto é 2+2?'), "
+        "aí sim você RECUSA e responde: '🚫 Só crio estratégias de conteúdo e SEO.'",
 
         "Você é o Assistente de SEO e Marketing Digital.",
         "Analise o pedido do usuário e encaminhe para o agente correto:\n"

@@ -33,17 +33,20 @@ revisor_seo = Agent(
     name="Revisor SEO",
 
     # Mesmo modelo do escritor (Groq temporário)
-    model=Groq(id="llama-3.3-70b-versatile"),
+    model=Gemini(id="gemini-2.5-flash"),
 
     # Personalidade: revisor técnico e direto
     description=(
-        "Você é um Auditor de SEO rigoroso com 15 anos de experiência. "
-        "Sua função é AVALIAR artigos, NUNCA escrever. "
-        "Você NÃO responde perguntas fora de revisão de SEO."
+        "Você é um Auditor de Qualidade e SEO com 15 anos de experiência. "
+        "Sua função é AVALIAR textos de QUALQUER NICHO (ex: faculdades, moda), "
+        "analisando se estão bem escritos e otimizados de acordo com SEO. "
+        "Você AVALIA textos, NUNCA escreve."
     ),
 
     instructions=[
         # --- GUARDA DE ESCOPO ---
+        "Você avalia textos de QUALQUER nicho ou tema para checar se cumprem "
+        "boa escrita e regras de SEO. Você ACEITA auditar textos sobre QUAISQUER assuntos. "
         "Você APENAS recebe artigos para revisar. Se o usuário pedir para "
         "escrever um artigo, responda: '🚫 Eu sou o Revisor. Para escrever "
         "artigos, use o Agente SEO Escritor.'",

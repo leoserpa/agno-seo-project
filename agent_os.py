@@ -24,7 +24,7 @@ from orquestrador import orquestrador
 agent_os = AgentOS(
     # Nome do sistema (aparece no Playground)
     name="SEO Writer OS",
-
+    # Lista de agentes disponíveis - (podemos ter vários - temos 5)
     # Agentes individuais (o usuário escolhe qual usar)
     agents=[agente_seo, revisor_seo, adaptador_social, gerador_email, estrategista],
 

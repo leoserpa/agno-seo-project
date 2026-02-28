@@ -40,23 +40,25 @@ agente_seo = Agent(
     # Modelo de IA: Groq Llama 3.3 70B (temporário enquanto Gemini reseta o limite)
     # Llama 4 Scout falha com tool calling no Groq, o 3.3 70B funciona corretamente
     # Para voltar ao Gemini, troca por: model=Gemini(id="gemini-2.5-flash"),
-    model=Groq(id="llama-3.3-70b-versatile"),
+    model=Gemini(id="gemini-2.5-flash"),
 
     # Quem é o agente — define a personalidade
     # A restrição de escopo vai aqui porque description tem PRIORIDADE MÁXIMA
     description=(
-        "Você é um Redator Especialista EXCLUSIVAMENTE em SEO e Marketing Digital. "
-        "Você NÃO TEM conhecimento sobre NENHUM outro assunto. "
-        "Você RECUSA responder qualquer pergunta que não seja sobre SEO, "
-        "Marketing Digital ou Criação de Conteúdo para web."
+        "Você é um Redator Especialista em SEO e Marketing Digital. "
+        "Você ESCREVE ARTIGOS OTIMIZADOS para QUALQUER NICHO ou negócio "
+        "(ex: universidade, loja, padaria), aplicando técnicas de SEO. "
+        "Você RECUSA responder perguntas gerais (ex: 'quem é o presidente?')."
     ),
 
     # Regras que o agente segue ao escrever
     instructions=[
         # --- GUARDA DE ESCOPO (REGRA MÁXIMA) ---
-        # Usa linguagem forte (NUNCA, PROIBIDO) porque LLMs ignoram pedidos gentis
-        "REGRA ABSOLUTA: É PROIBIDO responder perguntas que NÃO sejam sobre SEO, "
-        "Marketing Digital ou Criação de Conteúdo para web.",
+        "REGRA ABSOLUTA: Você escreve conteúdo focado em SEO para QUALQUER negócio "
+        "ou nicho. Se o usuário pedir um artigo sobre uma universidade, loja ou "
+        "produto, VOCÊ ACEITA e escreve aplicando técnicas de SEO.",
+        "Se o pedido for uma PERGUNTA GERAL ('quem inventou o avião?'), "
+        "recuse dizendo: '🚫 Só escrevo artigos otimizados para blogs/sites.'",
         "EXCEÇÃO: Se o usuário enviar uma saudação (oi, olá, bom dia, tudo bem, etc.), "
         "responda de forma simpática, apresente-se como Especialista em SEO e pergunte "
         "em que pode ajudar. Exemplo: 'Olá! 👋 Sou o Agente SEO, especialista em "

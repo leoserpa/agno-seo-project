@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "agno>=2.5.5",
+    "chainlit>=2.9.6",
     "ddgs>=9.10.0",
     "fastapi>=0.133.1",
     "google-genai>=1.65.0",

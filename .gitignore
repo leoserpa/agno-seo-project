@@ -11,3 +11,8 @@ wheels/
 
 # Environment variables (API keys)
 .env
+
+# AgentOS & Chainlit
+agent_sessions.db
+.chainlit/
+artigos/
