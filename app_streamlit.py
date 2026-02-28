@@ -84,14 +84,11 @@ if prompt := st.chat_input("Digite aqui o que você precisa..."):
         # Um "spinner" gira só até a primeira palavra chegar
         with st.spinner("Pensando e pesquisando... ⏳"):
             try:
-                # ==========================================================
-                # NOVIDADE: MODO STREAMING (Digita ao vivo)
-                # O stream_response é um gerador. À medida que o Agno pensa,
-                # as palavras vão chegando aos poucos.
-                # ==========================================================
-                stream_response = orquestrador.run_stream(
+                # O orquestrador retorna um gerador quando stream=True
+                stream_response = orquestrador.run(
                     prompt, 
-                    session_id=st.session_state.session_id
+                    session_id=st.session_state.session_id,
+                    stream=True
                 )
                 
                 # Resposta final completa para guardar na memória depois
@@ -101,11 +98,15 @@ if prompt := st.chat_input("Digite aqui o que você precisa..."):
                 placeholder = st.empty()
                 
                 for chunk in stream_response:
-                    # chunk.content é o pedaço de texto novo que chegou
+                    # No streaming com `run(stream=True)`, o chunk recebido geralmente 
+                    # já vem como a string de pedaço, ou como um RunResponse com content.
                     if hasattr(chunk, "content") and chunk.content is not None:
                         resposta_completa += chunk.content
-                        # Atualiza a tela imediatamente com o que já temos
-                        placeholder.markdown(resposta_completa + "▌")
+                    elif isinstance(chunk, str):
+                        resposta_completa += chunk
+                        
+                    # Atualiza a tela imediatamente com o cursor piscante no final
+                    placeholder.markdown(resposta_completa + "▌")
                 
                 # Tira o cursor piscante "▌" no final
                 placeholder.markdown(resposta_completa)
