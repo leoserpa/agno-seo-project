@@ -94,28 +94,35 @@ if prompt := st.chat_input("Digite aqui o que você precisa..."):
                 # Resposta final completa para guardar na memória depois
                 resposta_completa = ""
                 
-                # Container vazio que vamos atualizando letra por letra
-                placeholder = st.empty()
-                
-                for chunk in stream_response:
-                    # Em modo Team com stream=True, o Agno frequentemente 
-                    # emite a mensagem CONSOLIDADA até o momento no chunk.content
-                    if hasattr(chunk, "content") and chunk.content is not None:
-                        resposta_completa = chunk.content
-                    elif hasattr(chunk, "messages") and len(chunk.messages) > 0:
-                        # Fallback se o content vier vazio mas tiver mensagens
-                        ultimo_msg = chunk.messages[-1]
-                        if hasattr(ultimo_msg, "content"):
-                            resposta_completa = ultimo_msg.content
-                    elif isinstance(chunk, str):
-                        # Se vier texto puro incremental
-                        resposta_completa += chunk
+                # ==========================================================
+                # FUNÇÃO GERADORA DE DELTAS PARA O STREAMLIT
+                # O modo Team do Agno envia o texto *acumulado* a cada tick 
+                # e não as "novas palavras separadas". 
+                # Para o Streamlit animar ("digitar ao vivo"), ele precisa de pedaços soltos.
+                # ==========================================================
+                def iterar_novas_palavras(stream):
+                    texto_anterior = ""
+                    for chunk in stream:
+                        texto_atual = ""
                         
-                    # Atualiza a tela imediatamente com o cursor piscante no final
-                    placeholder.markdown(resposta_completa + "▌")
-                
-                # Tira o cursor piscante "▌" no final
-                placeholder.markdown(resposta_completa)
+                        if hasattr(chunk, "content") and chunk.content is not None:
+                            texto_atual = chunk.content
+                        elif hasattr(chunk, "messages") and len(chunk.messages) > 0:
+                            ultimo_msg = chunk.messages[-1]
+                            if hasattr(ultimo_msg, "content") and ultimo_msg.content:
+                                texto_atual = ultimo_msg.content
+                        elif isinstance(chunk, str):
+                            # Se por sorte vier como stream verdadeiro do python
+                            texto_atual = texto_anterior + chunk
+                            
+                        # Só emite a "diferença" (as novas letrinhas que caíram)
+                        if len(texto_atual) > len(texto_anterior):
+                            delta = texto_atual[len(texto_anterior):]
+                            texto_anterior = texto_atual
+                            yield delta
+
+                # O st.write_stream cuida da animação de digitação de geradores do python!
+                resposta_completa = st.write_stream(iterar_novas_palavras(stream_response))
 
                 # PASSO C: Salva a resposta do robô na memória para não perder
                 st.session_state.messages.append({"role": "assistant", "content": resposta_completa})
