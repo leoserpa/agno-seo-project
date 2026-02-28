@@ -1,0 +1,40 @@
+# Segurança: NUNCA enviar o .env com as chaves de API!
+.env
+
+# Ambiente virtual local (não necessário no container)
+.venv
+venv
+env
+
+# Cache do Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Arquivos do Git
+.git
+.gitignore
+
+# Banco de dados local (será criado novo no container)
+*.db
+*.sqlite
+*.sqlite3
+
+# Arquivos de lock (dependências instaladas pelo pip diretamente)
+uv.lock
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Pasta de artigos gerados localmente (opcional)
+artigos/
+
+# Configurações de editor
+.vscode
+.idea
+
+# Logs
+*.log
