@@ -98,11 +98,17 @@ if prompt := st.chat_input("Digite aqui o que você precisa..."):
                 placeholder = st.empty()
                 
                 for chunk in stream_response:
-                    # No streaming com `run(stream=True)`, o chunk recebido geralmente 
-                    # já vem como a string de pedaço, ou como um RunResponse com content.
+                    # Em modo Team com stream=True, o Agno frequentemente 
+                    # emite a mensagem CONSOLIDADA até o momento no chunk.content
                     if hasattr(chunk, "content") and chunk.content is not None:
-                        resposta_completa += chunk.content
+                        resposta_completa = chunk.content
+                    elif hasattr(chunk, "messages") and len(chunk.messages) > 0:
+                        # Fallback se o content vier vazio mas tiver mensagens
+                        ultimo_msg = chunk.messages[-1]
+                        if hasattr(ultimo_msg, "content"):
+                            resposta_completa = ultimo_msg.content
                     elif isinstance(chunk, str):
+                        # Se vier texto puro incremental
                         resposta_completa += chunk
                         
                     # Atualiza a tela imediatamente com o cursor piscante no final
