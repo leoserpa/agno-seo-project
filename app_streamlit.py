@@ -75,17 +75,17 @@ if len(st.session_state.messages) == 0:
     col1, col2 = st.columns(2)
     with col1:
         if st.button("✍️ Escrever artigo blog", use_container_width=True):
-            st.session_state.sugestao_clicada = "Escreva um artigo otimizado para SEO sobre "
+            st.session_state.sugestao_clicada = "Escreva um artigo otimizado para SEO sobre: A importância do Marketing Digital para pequenos negócios."
             
         if st.button("📱 Criar post Instagram", use_container_width=True):
-            st.session_state.sugestao_clicada = "Crie uma legenda de Instagram chamativa para o tema: "
+            st.session_state.sugestao_clicada = "Crie uma legenda de Instagram chamativa dando 3 dicas de como atrair mais clientes usando as redes sociais."
             
     with col2:
         if st.button("📧 Escrever Newsletter", use_container_width=True):
-            st.session_state.sugestao_clicada = "Escreva um e-mail de vendas convincente sobre "
+            st.session_state.sugestao_clicada = "Escreva um e-mail de vendas muito convincente oferecendo um serviço de Consultoria de SEO."
             
         if st.button("📅 Montar Calendário", use_container_width=True):
-            st.session_state.sugestao_clicada = "Monte um calendário de conteúdo para 7 dias sobre "
+            st.session_state.sugestao_clicada = "Monte um calendário de conteúdo prático de 7 dias para o Instagram de uma pizzaria focada em delivery."
 
 
 # ============================================================
