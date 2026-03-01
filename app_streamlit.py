@@ -139,6 +139,11 @@ if prompt:
                 def iterar_novas_palavras(stream):
                     texto_anterior = ""
                     for chunk in stream:
+                        # Intercepta falhas silenciosas da API (JSON de Erro 429 injetado no stream pelo framework)
+                        chunk_str = str(chunk)
+                        if "429" in chunk_str and ("Quota exceeded" in chunk_str or "RESOURCE_EXHAUSTED" in chunk_str or "rate limit" in chunk_str.lower()):
+                            raise Exception("API_QUOTA_EXCEEDED")
+                            
                         texto_atual = ""
                         # Se for um obj de resposta do Agno (RunResponse)
                         if hasattr(chunk, "content") and chunk.content is not None:
