@@ -32,7 +32,28 @@ st.markdown("---")
 
 
 # ============================================================
-# 2. INICIALIZAÇÃO DO ESTADO DA SESSÃO (Memória do App)
+# 2. BARRA LATERAL (SIDEBAR) & CONFIGURAÇÕES
+# ============================================================
+with st.sidebar:
+    st.image("https://cdn-icons-png.flaticon.com/512/1998/1998592.png", width=60)
+    st.markdown("### Agência Marketing IA")
+    st.markdown("Agentes especializados focados em escalar os resultados digitais do seu negócio.")
+    
+    st.markdown("---")
+    
+    # Função para limpar o chat
+    def limpar_chat():
+        st.session_state.messages = []
+        st.session_state.session_id = str(uuid.uuid4())
+        
+    st.button("🗑️ Limpar Conversa", on_click=limpar_chat, use_container_width=True)
+    
+    st.markdown("---")
+    st.caption("Powered by [Agno](https://agno.com) & [Streamlit](https://streamlit.io)")
+
+
+# ============================================================
+# 3. INICIALIZAÇÃO DO ESTADO DA SESSÃO (Memória do App)
 # ============================================================
 
 # Se for a primeira vez que o usuário abre a página, cria um ID único para a sessão
@@ -41,21 +62,29 @@ if "session_id" not in st.session_state:
 
 # Cria uma lista vazia para guardar o histórico de mensagens
 if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {
-            "role": "assistant",
-            "content": (
-                "## 👋 Olá! Sou seu Assistente de Marketing Digital\n\n"
-                "Posso ajudar com:\n"
-                "- 📅 **Planejar** seu conteúdo\n"
-                "- ✍️ **Escrever** artigos otimizados para SEO\n"
-                "- 🔍 **Avaliar** a qualidade de SEO de um artigo\n"
-                "- 📱 **Criar posts** para Redes Sociais\n"
-                "- 📧 **Criar emails** e newsletters\n\n"
-                "**O que você precisa hoje?** 😊"
-            )
-        }
-    ]
+    st.session_state.messages = []
+
+# ============================================================
+# 4. TELA INICIAL (QUANDO NÃO HÁ MENSAGENS)
+# ============================================================
+if len(st.session_state.messages) == 0:
+    st.markdown("### 👋 Olá! Como posso ajudar hoje?")
+    st.markdown("Escolha uma das sugestões abaixo ou digite o que precisa:")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("✍️ Escrever artigo blog", use_container_width=True):
+            st.session_state.sugestao_clicada = "Escreva um artigo otimizado para SEO sobre "
+            
+        if st.button("📱 Criar post Instagram", use_container_width=True):
+            st.session_state.sugestao_clicada = "Crie uma legenda de Instagram chamativa para o tema: "
+            
+    with col2:
+        if st.button("📧 Escrever Newsletter", use_container_width=True):
+            st.session_state.sugestao_clicada = "Escreva um e-mail de vendas convincente sobre "
+            
+        if st.button("📅 Montar Calendário", use_container_width=True):
+            st.session_state.sugestao_clicada = "Monte um calendário de conteúdo para 7 dias sobre "
 
 
 # ============================================================
@@ -69,10 +98,16 @@ for message in st.session_state.messages:
 
 
 # ============================================================
-# 4. CAPTURAR A NOVA MENSAGEM DO USUÁRIO
+# 5. CAPTURAR A NOVA MENSAGEM DO USUÁRIO
 # ============================================================
-# A caixa de texto no rodapé da página. Se o usuário digitar algo:
-if prompt := st.chat_input("Digite aqui o que você precisa..."):
+# Verifica se o usuário digitou na caixa OU clicou em um botão de sugestão
+prompt = st.chat_input("Digite aqui o que você precisa...")
+
+if "sugestao_clicada" in st.session_state:
+    prompt = st.session_state.sugestao_clicada
+    del st.session_state.sugestao_clicada # Limpa após usar
+
+if prompt:
     
     # PASSO A: Mostrar a mensagem do usuário na tela e salvar na memória
     with st.chat_message("user"):
