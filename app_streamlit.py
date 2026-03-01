@@ -140,19 +140,28 @@ if prompt:
                     texto_anterior = ""
                     for chunk in stream:
                         texto_atual = ""
-                        
+                        # Se for um obj de resposta do Agno (RunResponse)
                         if hasattr(chunk, "content") and chunk.content is not None:
+                            # Ignora se for log técnico injetado pelo Agno em texto (ex: pesquisas web)
+                            if isinstance(chunk.content, str) and "completed in" in chunk.content and "s." in chunk.content:
+                                continue
                             texto_atual = chunk.content
+                            
+                        # Se vier em formato de array de mensagens
                         elif hasattr(chunk, "messages") and len(chunk.messages) > 0:
                             ultimo_msg = chunk.messages[-1]
-                            if hasattr(ultimo_msg, "content") and ultimo_msg.content:
+                            # Só extrai se for o "assistant" falando, ignorando "tool"
+                            if getattr(ultimo_msg, "role", "") == "assistant" and getattr(ultimo_msg, "content", None):
                                 texto_atual = ultimo_msg.content
+                                
+                        # Se for pedaço de texto bruto (string iterada)
                         elif isinstance(chunk, str):
-                            # Se por sorte vier como stream verdadeiro do python
+                            if ("completed in" in chunk and "s." in chunk) or chunk.startswith("Running:"):
+                                continue
                             texto_atual = texto_anterior + chunk
                             
-                        # Só emite a "diferença" (as novas letrinhas que caíram)
-                        if len(texto_atual) > len(texto_anterior):
+                        # Só emite a "diferença" se tivermos mais texto real do que tínhamos antes
+                        if texto_atual and len(texto_atual) > len(texto_anterior):
                             delta = texto_atual[len(texto_anterior):]
                             texto_anterior = texto_atual
                             yield delta
