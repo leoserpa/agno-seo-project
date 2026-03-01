@@ -35,7 +35,8 @@ st.markdown("---")
 # 2. BARRA LATERAL (SIDEBAR) & CONFIGURAÇÕES
 # ============================================================
 with st.sidebar:
-    st.image("https://cdn-icons-png.flaticon.com/512/1998/1998592.png", width=60)
+    # URL de ícone mais profissional e futurista (Robô IA Estilizado)
+    st.image("https://cdn-icons-png.flaticon.com/512/2814/2814666.png", width=60)
     st.markdown("### Agência Marketing IA")
     st.markdown("Agentes especializados focados em escalar os resultados digitais do seu negócio.")
     
