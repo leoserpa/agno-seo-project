@@ -142,42 +142,48 @@ if prompt:
                 
                 # ==========================================================
                 # FUNÇÃO GERADORA DE DELTAS PARA O STREAMLIT
-                # O Agno emite pedaços puros (deltas) ao longo do processamento
-                # e no finalzinho emite 1 objeto contendo o texto inteiro repetido.
+                # Resolve o problema de "Engolir Palavras" e "Repetir o Texto Todo"
+                # durante a troca de contexto entre Orquestrador e Estrategista.
                 # ==========================================================
                 def iterar_novas_palavras(stream):
-                    acumulado = ""
+                    texto_anterior = ""
                     for chunk in stream:
-                        # Intercepta falhas silenciosas da API (JSON de Erro 429)
                         chunk_str = str(chunk)
+                        
+                        # Intercepta falhas silenciosas da API (JSON de Erro 429)
                         if "429" in chunk_str and ("Quota exceeded" in chunk_str or "RESOURCE_EXHAUSTED" in chunk_str or "rate limit" in chunk_str.lower()):
                             raise Exception("API_QUOTA_EXCEEDED")
                             
                         texto_atual = ""
-                        # O foco é APENAS o conteúdo de fala (deltas)
+                        
+                        # Busca o texto na propriedade 'content' ou assume se for string
                         if hasattr(chunk, "content") and isinstance(chunk.content, str):
                             texto_atual = chunk.content
                         elif isinstance(chunk, str):
                             texto_atual = chunk
                             
-                        if not texto_atual:
+                        # Filtros de sujeira de log de sistema: 
+                        # Se não tem texto ou se é log de sistema, ignora
+                        if not texto_atual or "completed in" in texto_atual or texto_atual.startswith("Running:") or texto_atual.startswith("web_search"):
                             continue
                             
-                        # Ignora os textos injetados por ferramentas de background do Agno
-                        if "completed in" in texto_atual and ("s." in texto_atual or "ms." in texto_atual):
-                            continue
-                        if texto_atual.startswith("Running:") or texto_atual.startswith("web_search"):
-                            continue
-                            
-                        # PROTEÇÃO ANTI-REPETIÇÃO GIGANTE: 
-                        # O Agno sempre emite o texto TODO pronto no último pulso do stream.
-                        # Sabemos que é o pulso final se o "texto novo" for gigante e idêntico ao que já acumulamos.
-                        if len(acumulado) > 30 and len(texto_atual) >= len(acumulado) and texto_atual.startswith(acumulado[:20]):
-                            continue # Ignora, pois já exibimos isso tudo com os deltas anteriores!
-                            
-                        # Acumula na memória e joga o delta pro efeito de digitação do Streamlit
-                        acumulado += texto_atual
-                        yield texto_atual
+                        # PROTEÇÃO CONTRA A "SÍNDROME DE RESET DO ORQUESTRADOR"
+                        # Quando o Agno passa a bola de um Agente pro Outro no meio do stream,
+                        # ele apaga as variáveis e o texto recomeça.
+                        # Se a string recomeçar (ex: "Estratégia" não bater com "Ola Sou Estrategista"), zeramos a métrica!
+                        if len(texto_anterior) > 0 and len(texto_atual) > 0:
+                            # Se as primeiras 10 letras do texto atual NÃO batem com o começo do que guardamos,
+                            # significa que o agente "limpou" o buffer enviando um bloco totalmente diferente.
+                            # Para não cortarmos o meio da palavra, resetamos a âncora.
+                            prefix_len = min(10, len(texto_anterior), len(texto_atual))
+                            if texto_atual[:prefix_len] != texto_anterior[:prefix_len]:
+                                texto_anterior = "" 
+                        
+                        # Calcula a matemática: "O que chegou de letra nova que não tínhamos exibido antes?"
+                        if len(texto_atual) > len(texto_anterior):
+                            delta_visivel = texto_atual[len(texto_anterior):]
+                            texto_anterior = texto_atual
+                            yield delta_visivel
 
                 # O st.write_stream cuida da animação de digitação de geradores do python!
                 resposta_completa = st.write_stream(iterar_novas_palavras(stream_response))
