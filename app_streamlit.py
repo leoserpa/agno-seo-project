@@ -93,9 +93,19 @@ if len(st.session_state.messages) == 0:
 # ============================================================
 # Toda vez que a página recarregar, nós varremos a lista de mensagens salvas
 # e desenhamos na tela novamente (balões de chat)
-for message in st.session_state.messages:
+for idx, message in enumerate(st.session_state.messages):
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
+        
+        # Botão de exportação visível debaixo das respostas do assistente (ignora erros visuais)
+        if message["role"] == "assistant" and "🚨" not in message["content"] and "⚠️" not in message["content"]:
+            st.download_button(
+                label="📥 Baixar Conteúdo (.md)",
+                data=message["content"],
+                file_name=f"conteudo_agencia_{idx}.md",
+                mime="text/markdown",
+                key=f"dl_history_{idx}"
+            )
 
 
 # ============================================================
@@ -173,6 +183,15 @@ if prompt:
 
                 # O st.write_stream cuida da animação de digitação de geradores do python!
                 resposta_completa = st.write_stream(iterar_novas_palavras(stream_response))
+
+                # Adiciona botão de exportar imediatamente abaixo da nova mensagem gerada
+                st.download_button(
+                    label="📥 Baixar Conteúdo (.md)",
+                    data=resposta_completa,
+                    file_name=f"conteudo_agencia_{len(st.session_state.messages)}.md",
+                    mime="text/markdown",
+                    key=f"dl_new_{len(st.session_state.messages)}"
+                )
 
                 # PASSO C: Salva a resposta do robô na memória para não perder
                 st.session_state.messages.append({"role": "assistant", "content": resposta_completa})
