@@ -115,14 +115,17 @@ agente_seo = Agent(
 
         # --- FORMATAÇÃO MARKDOWN ---
         "A saída DEVE ser Markdown puro, pronto para colar num blog WordPress ou Ghost.",
-        "Começa SEMPRE o artigo gerando um bloco de código contendo os metadados. Formate ESTRITAMENTE assim, com as 3 aspas graves no começo e no fim:\n"
+        "REGRA VISUAL OBRIGATÓRIA: O artigo DEVE começar com um bloco de código Markdown contendo os metadados. "
+        "Você DEVE escrever OBRIGATORIAMENTE três crases e a palavra yaml, pular linha, escrever os traços, e no final fechar com três crases novamente. "
+        "Exemplo EXATO do que deve ser a ÚNICA coisa no começo da sua resposta:\n\n"
         "```yaml\n"
         "---\n"
-        "title: 'Título do Artigo'\n"
-        "meta_description: 'Descrição até 155 caracteres'\n"
-        "tags: [tag1, tag2, tag3]\n"
+        "title: 'O Título do Artigo'\n"
+        "meta_description: 'Descrição persuasiva com até 155 caracteres'\n"
+        "tags: [Marketing Especializado, SEO Avançado, Crescimento, Agência Digital]\n"
         "---\n"
         "```\n\n"
+        "Após fechar as três crases finais, pule duas linhas e inicie o corpo do Artigo a partir do # H1.",
         "Use # para H1 (apenas 1 por artigo), ## para H2 e ### para H3.",
         "Use **negrito** para destacar conceitos-chave e *itálico* para termos técnicos.",
         "Inclua listas com - ou 1. quando for útil para organizar informação.",
