@@ -195,9 +195,20 @@ if prompt:
                     if not texto_atual or "completed in" in texto_atual or texto_atual.startswith("Running:") or texto_atual.startswith("web_search"):
                         continue
                         
-                    # Atualiza o painel gráfico com o conteúdo consolidado até o momento
-                    # Adicionamos os pedaços (deltas) à string principal a cada loop
-                    texto_tela += texto_atual
+                    # ==========================================================
+                    # LÓGICA HÍBRIDA DE STREAMING (AGNO 0.2+)
+                    # O Orquestrador (Team) gera Chunks tipo 'RunContentEvent' de deltas
+                    # Os Agentes (Agent) geram Chunks tipo 'RunResponse' cumulativos
+                    # ==========================================================
+                    nome_tipo = type(chunk).__name__
+                    
+                    if nome_tipo == "RunResponse" or (texto_tela and len(texto_tela) > 10 and texto_tela[:10] in texto_atual):
+                        # Se for Cumulativo, a string substitui a anterior
+                        texto_tela = texto_atual
+                    else:
+                        # Se for Delta, soma à string existente
+                        texto_tela += texto_atual
+                        
                     msg_placeholder.markdown(texto_tela + " ▍")
                     
                 # Fixar o texto final (remove o cursor)
