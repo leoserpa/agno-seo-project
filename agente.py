@@ -127,7 +127,8 @@ agente_seo = Agent(
         "Use **negrito** para destacar conceitos-chave e *itálico* para termos técnicos.",
         "Inclua listas com - ou 1. quando for útil para organizar informação.",
         "Adicione uma seção '## Conclusão' no final com um resumo e call-to-action.",
-        "Inclua uma seção '## FAQ' no final com 3 perguntas e respostas frequentes. Deixe cada pergunta em **negrito** e a resposta logo abaixo.",
+        "Inclua uma seção '## FAQ' no final com 3 perguntas e respostas frequentes.",
+        "MUITO IMPORTANTE NA FAQ: Formate cada pergunta EXATAMENTE como '### Título da Pergunta'. Não coloque hashes extras. A resposta deve vir na linha logo abaixo.",
         "Nunca use HTML — apenas Markdown puro.",
     ],
 
