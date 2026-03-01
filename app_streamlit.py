@@ -143,40 +143,35 @@ if prompt:
                 # ==========================================================
                 # FUNÇÃO GERADORA DE DELTAS PARA O STREAMLIT
                 # O modo Team do Agno envia o texto *acumulado* a cada tick 
-                # e não as "novas palavras separadas". 
-                # Para o Streamlit animar ("digitar ao vivo"), ele precisa de pedaços soltos.
                 # ==========================================================
                 def iterar_novas_palavras(stream):
                     texto_anterior = ""
                     for chunk in stream:
-                        # Intercepta falhas silenciosas da API (JSON de Erro 429 injetado no stream pelo framework)
+                        # Intercepta falhas silenciosas da API (JSON de Erro 429)
                         chunk_str = str(chunk)
                         if "429" in chunk_str and ("Quota exceeded" in chunk_str or "RESOURCE_EXHAUSTED" in chunk_str or "rate limit" in chunk_str.lower()):
                             raise Exception("API_QUOTA_EXCEEDED")
                             
-                        texto_atual = ""
-                        # Se for um obj de resposta do Agno (RunResponse)
-                        if hasattr(chunk, "content") and chunk.content is not None:
-                            # Ignora se for log técnico injetado pelo Agno em texto (ex: pesquisas web)
-                            if isinstance(chunk.content, str) and "completed in" in chunk.content and "s." in chunk.content:
-                                continue
-                            texto_atual = chunk.content
+                        # O foco é APENAS o conteúdo de fala do Assistente. 
+                        # Ignoramos strings e arrays soltos porque são logs das Ferramentas (DuckDuckGoTools)
+                        if not hasattr(chunk, "content") or not isinstance(chunk.content, str):
+                            continue
                             
-                        # Se vier em formato de array de mensagens
-                        elif hasattr(chunk, "messages") and len(chunk.messages) > 0:
-                            ultimo_msg = chunk.messages[-1]
-                            # Só extrai se for o "assistant" falando, ignorando "tool"
-                            if getattr(ultimo_msg, "role", "") == "assistant" and getattr(ultimo_msg, "content", None):
-                                texto_atual = ultimo_msg.content
+                        texto_atual = chunk.content
+                        
+                        # Se por algum motivo o Agno injetar string de ferramenta no content, ignora.
+                        if "completed in" in texto_atual and "s." in texto_atual:
+                            continue
+                            
+                        # Só emite a "diferença" se o texto atual for maior
+                        if len(texto_atual) > len(texto_anterior):
+                            
+                            # PROTEÇÃO ANTI-CORTE: Se o "texto_atual" recomeçou (ex: Orquestrador passou pro Estrategista), 
+                            # a base das strings não baterá. Se simplesmente cortarmos por len(), engole o começo da frase!
+                            if len(texto_anterior) > 0 and not texto_atual.startswith(texto_anterior[:15]):
+                                # Ocorreu uma troca de locutor interna no Agno (contexto resetou)!
+                                texto_anterior = "" # Reseta a âncora para não cortar palavras do novo locutor
                                 
-                        # Se for pedaço de texto bruto (string iterada)
-                        elif isinstance(chunk, str):
-                            if ("completed in" in chunk and "s." in chunk) or chunk.startswith("Running:"):
-                                continue
-                            texto_atual = texto_anterior + chunk
-                            
-                        # Só emite a "diferença" se tivermos mais texto real do que tínhamos antes
-                        if texto_atual and len(texto_atual) > len(texto_anterior):
                             delta = texto_atual[len(texto_anterior):]
                             texto_anterior = texto_atual
                             yield delta
