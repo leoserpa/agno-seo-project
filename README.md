@@ -26,7 +26,7 @@ O projeto utiliza um Orquestrador (Team Leader) que analisa seu pedido e roteia 
 
 - **Framework de IA:** [Agno](https://agno.com) (Ex-Phidata)
 - **Interface Gráfica Web:** [Streamlit](https://streamlit.io)
-- **Modelos de Linguagem (LLMs):** Google Gemini 2.5 Flash / Groq
+- **Modelo de Linguagem (LLMs):** Google Gemini 2.5 Flash 
 - **Gerenciador de Pacotes:** uv (Extremamente rápido)
 
 ## 💡 Exemplos de Prompts para o Chat
@@ -64,8 +64,6 @@ Crie um arquivo `.env` na raiz do projeto contendo as chaves dos modelos que des
 # Chaves Principais (Atuais)
 GOOGLE_API_KEY=sua_chave_do_google_aqui
 GROQ_API_KEY=sua_chave_do_groq_aqui
-
-# Outras opções suportadas pelo Agno (Opcionais)
 OPENAI_API_KEY=sua_chave_da_openai_aqui
 ANTHROPIC_API_KEY=sua_chave_da_anthropic_claude_aqui
 ```
@@ -89,8 +87,6 @@ Este projeto está configurado para deploy imediato no **Streamlit Community Clo
 # Chaves Principais
 GOOGLE_API_KEY="sua_chave_aqui"
 GROQ_API_KEY="sua_chave_aqui"
-
-# Chaves Opcionais Multi-LLM
 OPENAI_API_KEY="sua_chave_aqui"
 ANTHROPIC_API_KEY="sua_chave_aqui"
 ```
