@@ -99,13 +99,23 @@ for idx, message in enumerate(st.session_state.messages):
         
         # Botão de exportação visível debaixo das respostas do assistente (ignora erros visuais)
         if message["role"] == "assistant" and "🚨" not in message["content"] and "⚠️" not in message["content"]:
-            st.download_button(
-                label="📥 Baixar Conteúdo (.md)",
-                data=message["content"],
-                file_name=f"conteudo_agencia_{idx}.md",
-                mime="text/markdown",
-                key=f"dl_history_{idx}"
-            )
+            col1, col2 = st.columns(2)
+            with col1:
+                st.download_button(
+                    label="📥 Baixar em Markdown (.md)",
+                    data=message["content"],
+                    file_name=f"conteudo_agencia_{idx}.md",
+                    mime="text/markdown",
+                    key=f"dl_history_md_{idx}"
+                )
+            with col2:
+                st.download_button(
+                    label="📄 Baixar em Texto Puro (.txt)",
+                    data=message["content"],
+                    file_name=f"conteudo_agencia_{idx}.txt",
+                    mime="text/plain",
+                    key=f"dl_history_txt_{idx}"
+                )
 
 
 # ============================================================
@@ -176,13 +186,23 @@ if prompt:
                 resposta_completa = texto_tela
 
                 # Adiciona botão de exportar imediatamente abaixo da nova mensagem gerada
-                st.download_button(
-                    label="📥 Baixar Conteúdo (.md)",
-                    data=resposta_completa,
-                    file_name=f"conteudo_agencia_{len(st.session_state.messages)}.md",
-                    mime="text/markdown",
-                    key=f"dl_new_{len(st.session_state.messages)}"
-                )
+                col_dl_1, col_dl_2 = st.columns(2)
+                with col_dl_1:
+                    st.download_button(
+                        label="📥 Baixar em Markdown (.md)",
+                        data=resposta_completa,
+                        file_name=f"conteudo_agencia_{len(st.session_state.messages)}.md",
+                        mime="text/markdown",
+                        key=f"dl_new_md_{len(st.session_state.messages)}"
+                    )
+                with col_dl_2:
+                    st.download_button(
+                        label="📄 Baixar em Texto Puro (.txt)",
+                        data=resposta_completa,
+                        file_name=f"conteudo_agencia_{len(st.session_state.messages)}.txt",
+                        mime="text/plain",
+                        key=f"dl_new_txt_{len(st.session_state.messages)}"
+                    )
 
                 # PASSO C: Salva a resposta do robô na memória para não perder
                 st.session_state.messages.append({"role": "assistant", "content": resposta_completa})
