@@ -40,10 +40,15 @@ cd agno-seo-agent
 ```
 
 2. **Configure suas Chaves de API:**
-Crie um arquivo `.env` na raiz do projeto contendo as chaves do Google e do Groq:
+Crie um arquivo `.env` na raiz do projeto contendo as chaves dos modelos que desejar utilizar (Google, Groq, OpenAI ou Anthropic):
 ```env
-GOOGLE_API_KEY=sua_chave_aqui
-GROQ_API_KEY=sua_chave_aqui
+# Chaves Principais (Atuais)
+GOOGLE_API_KEY=sua_chave_do_google_aqui
+GROQ_API_KEY=sua_chave_do_groq_aqui
+
+# Outras opções suportadas pelo Agno (Opcionais)
+OPENAI_API_KEY=sua_chave_da_openai_aqui
+ANTHROPIC_API_KEY=sua_chave_da_anthropic_claude_aqui
 ```
 
 3. **Inicie a Interface:**
