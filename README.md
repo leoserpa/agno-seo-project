@@ -86,8 +86,13 @@ Este projeto está configurado para deploy imediato no **Streamlit Community Clo
 3. Selecione este repositório e o arquivo principal: `app_streamlit.py`.
 4. Em **Advanced Settings**, cole o conteúdo do seu `.env` na caixa de **Secrets** usando o padrão TOML:
 ```toml
+# Chaves Principais
 GOOGLE_API_KEY="sua_chave_aqui"
 GROQ_API_KEY="sua_chave_aqui"
+
+# Chaves Opcionais Multi-LLM
+OPENAI_API_KEY="sua_chave_aqui"
+ANTHROPIC_API_KEY="sua_chave_aqui"
 ```
 5. Clique em **Deploy**!
 
