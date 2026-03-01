@@ -1,67 +1,66 @@
----
-title: Agencia de Marketing IA
-emoji: 🚀
-colorFrom: blue
-colorTo: purple
-sdk: docker
-pinned: false
-license: mit
-app_port: 7860
----
+# 🤖 Agência de Marketing Digital com IA
 
-# 🚀 Agência de Marketing Digital com IA
+Assistente inteligente e autônomo com **5 agentes especializados** em Marketing Digital e SEO, construído com o poderoso framework **[Agno](https://agno.com)** e interface moderna em **[Streamlit](https://streamlit.io)**.
 
-Assistente inteligente com **5 agentes especializados** em marketing digital e SEO, construído com [Agno](https://agno.com) e [Chainlit](https://chainlit.io).
+## 💼 A Equipe de Agentes
 
-## 💼 Agentes Disponíveis
+O projeto utiliza um Orquestrador (Team Leader) que analisa seu pedido e roteia para o especialista adequado:
 
-| Agente | Descrição |
-|--------|-----------|
-| 📅 **Estrategista** | Cria calendários e cronogramas de conteúdo |
-| ✍️ **Agente SEO** | Escreve artigos otimizados para buscadores |
-| 🔍 **Revisor SEO** | Avalia e pontua artigos antes da publicação |
-| 📱 **Adaptador Social** | Gera posts para Instagram, Facebook, LinkedIn e X |
-| 📧 **Gerador de Email** | Cria newsletters e campanhas de email marketing |
+| Agente | Especialidade | Descrição |
+|--------|---------------|-----------|
+| 📅 **Estrategista** | Planejamento | Cria calendários e cronogramas de conteúdo detalhados |
+| ✍️ **Agente SEO** | Redação | Escreve artigos longos otimizados para motores de busca |
+| 🔍 **Revisor SEO** | Auditoria | Avalia, pontua e sugere melhorias em artigos antes da publicação |
+| 📱 **Adaptador Social**| Redes Sociais | Gera posts virais adaptados para Instagram, LinkedIn e X |
+| 📧 **Gerador de Email** | Conversão | Cria newsletters e campanhas de email marketing persuasivas |
 
-## 🛠️ Tecnologias
+## ✨ Destaques & Funcionalidades (UI/UX)
+- ⚡ **Respostas em Streaming ao Vivo:** O texto é digitado na tela de forma contínua igual ao ChatGPT, sem travamentos.
+- 🎯 **Atalhos de Ação Rápida:** Tela inicial com botões para gerar artigos, posts e calendários com 1 clique.
+- 🧹 **Sidebar Funcional:** Painel lateral elegante com a opção de Limpar Conversa e resetar a memória do agente.
+- 🧠 **Busca na Web em Tempo Real:** Conectado ao DuckDuckGo para recuperar informações atualizadas e notícias recentes.
 
-- **Framework de Agentes**: [Agno](https://agno.com)
-- **Interface**: [Chainlit](https://chainlit.io)
-- **LLMs**: Google Gemini + Groq
-- **Busca na Web**: DuckDuckGo Search
+## 🛠️ Tecnologias Utilizadas
 
-## 🚀 Como Usar
+- **Framework de IA:** [Agno](https://agno.com) (Ex-Phidata)
+- **Interface Gráfica Web:** [Streamlit](https://streamlit.io)
+- **Modelos de Linguagem (LLMs):** Google Gemini 2.5 Flash / Groq
+- **Gerenciador de Pacotes:** uv (Extremamente rápido)
 
-Digite o que seu negócio precisa diretamente no chat. Exemplos:
+## 🚀 Como Rodar Localmente
 
-- *"Cria um calendário de conteúdo para uma loja de roupas para Março"*
-- *"Escreve um artigo SEO sobre marketing digital em 2026"*
-- *"Adapta esse artigo para Instagram"*
-- *"Avalia o SEO desse texto: ..."*
+Se quiser rodar os agentes no seu próprio computador:
 
-## ⚙️ Configuração Local
-
+1. **Clone o repositório:**
 ```bash
-# Clone o repositório
-git clone https://huggingface.co/spaces/SEU-USUARIO/agencia-marketing-ia
-cd agencia-marketing-ia
-
-# Configure as variáveis de ambiente
-cp .env.example .env
-# Edite o .env com suas chaves de API
-
-# Instale as dependências
-pip install -r requirements-deploy.txt
-
-# Inicie o servidor
-chainlit run app_chainlit.py
+git clone https://github.com/SEU-USUARIO/agno-seo-agent.git
+cd agno-seo-agent
 ```
 
-## 🔑 Variáveis de Ambiente Necessárias
+2. **Configure suas Chaves de API:**
+Crie um arquivo `.env` na raiz do projeto contendo as chaves do Google e do Groq:
+```env
+GOOGLE_API_KEY=sua_chave_aqui
+GROQ_API_KEY=sua_chave_aqui
+```
 
-Configure em **Settings → Variables and secrets** no Hugging Face Space:
+3. **Inicie a Interface:**
+Usando o `uv` (recomendado) ou pip tradicional:
+```bash
+uv run streamlit run app_streamlit.py
+```
+*O painel abrirá automaticamente no seu navegador em `http://localhost:8501/`*
 
-| Variável | Descrição |
-|----------|-----------|
-| `GOOGLE_API_KEY` | Chave da API do Google Gemini |
-| `GROQ_API_KEY` | Chave da API do Groq |
+## 🌐 Deploy na Nuvem (Streamlit Cloud)
+
+Este projeto está configurado para deploy imediato no **Streamlit Community Cloud** de forma 100% gratuita.
+
+1. Acesse [share.streamlit.io](https://share.streamlit.io/).
+2. Conecte com seu GitHub e clique em **New App**.
+3. Selecione este repositório e o arquivo principal: `app_streamlit.py`.
+4. Em **Advanced Settings**, cole o conteúdo do seu `.env` na caixa de **Secrets** usando o padrão TOML:
+```toml
+GOOGLE_API_KEY="sua_chave_aqui"
+GROQ_API_KEY="sua_chave_aqui"
+```
+5. Clique em **Deploy**!
