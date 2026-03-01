@@ -180,7 +180,7 @@ if prompt:
             except Exception as e:
                 erro_str = str(e)
                 # Verifica se o erro é de Cota da API ou Limite de Taxa (Google/Groq/OpenAI, etc)
-                if "429" in erro_str or "Quota exceeded" in erro_str or "RESOURCE_EXHAUSTED" in erro_str or "rate limit" in erro_str.lower():
+                if "API_QUOTA_EXCEEDED" in erro_str or "429" in erro_str or "Quota exceeded" in erro_str or "RESOURCE_EXHAUSTED" in erro_str or "rate limit" in erro_str.lower():
                     erro_msg = (
                         "🚨 **Aviso: Limite da IA Atingido!**\n\n"
                         "A cota de uso da API da inteligência artificial acabou por hoje ou você enviou muitas mensagens muito rápido. "
