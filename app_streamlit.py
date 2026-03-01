@@ -14,7 +14,25 @@ COMO RODAR:
 
 import streamlit as st
 import uuid
+import re
 from orquestrador import orquestrador
+
+# ============================================================
+# FUNÇÃO UTILITÁRIA DE LIMPEZA
+# ============================================================
+def limpar_markdown_para_txt(texto_md):
+    """Remove caracteres especiais Markdown (*, #, links) para gerar um TXT limpo."""
+    if not texto_md:
+        return ""
+    # Remove bloco YAML e tags HTML (se houver)
+    texto = re.sub(r'```yaml.*?```', '', texto_md, flags=re.DOTALL)
+    # Remove cabeçalhos (#) e negritos/itálicos (* ou _)
+    texto = re.sub(r'#+\s*', '', texto)
+    texto = re.sub(r'\*{1,2}(.*?)\*{1,2}', r'\1', texto)
+    texto = re.sub(r'_{1,2}(.*?)_{1,2}', r'\1', texto)
+    # Transforma Links Markdown [Texto](Url) em "Texto: Url"
+    texto = re.sub(r'\[([^\]]+)\]\(([^\)]+)\)', r'\1: \2', texto)
+    return texto.strip()
 
 # ============================================================
 # 1. CONFIGURAÇÃO DA PÁGINA
@@ -111,7 +129,7 @@ for idx, message in enumerate(st.session_state.messages):
             with col2:
                 st.download_button(
                     label="📄 Baixar em Texto Puro (.txt)",
-                    data=message["content"],
+                    data=limpar_markdown_para_txt(message["content"]),
                     file_name=f"conteudo_agencia_{idx}.txt",
                     mime="text/plain",
                     key=f"dl_history_txt_{idx}"
@@ -198,7 +216,7 @@ if prompt:
                 with col_dl_2:
                     st.download_button(
                         label="📄 Baixar em Texto Puro (.txt)",
-                        data=resposta_completa,
+                        data=limpar_markdown_para_txt(resposta_completa),
                         file_name=f"conteudo_agencia_{len(st.session_state.messages)}.txt",
                         mime="text/plain",
                         key=f"dl_new_txt_{len(st.session_state.messages)}"
