@@ -71,3 +71,7 @@ GOOGLE_API_KEY="sua_chave_aqui"
 GROQ_API_KEY="sua_chave_aqui"
 ```
 5. Clique em **Deploy**!
+
+## 📜 Licença
+
+Este projeto é desenvolvido sob a **Licença MIT** (MIT License). Você tem permissão para usar, copiar, modificar, e distribuir este software de forma gratuita para fins pessoais ou comerciais, desde que o aviso de direitos autorais seja mantido. Veja o arquivo `LICENSE` para mais detalhes.
