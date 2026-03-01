@@ -173,7 +173,16 @@ if prompt:
                 st.session_state.messages.append({"role": "assistant", "content": resposta_completa})
                 
             except Exception as e:
-                # Se algo der errado (ex: sem chave de API), mostra o erro
-                erro_msg = f"⚠️ Ocorreu um erro: {str(e)}"
+                erro_str = str(e)
+                # Verifica se o erro é de Cota da API ou Limite de Taxa (Google/Groq/OpenAI, etc)
+                if "429" in erro_str or "Quota exceeded" in erro_str or "RESOURCE_EXHAUSTED" in erro_str or "rate limit" in erro_str.lower():
+                    erro_msg = (
+                        "🚨 **Aviso: Limite da IA Atingido!**\n\n"
+                        "A cota de uso da API da inteligência artificial acabou por hoje ou você enviou muitas mensagens muito rápido. "
+                        "Por favor, aguarde alguns minutos e tente novamente, ou atualize sua Chave de API nas configurações do painel."
+                    )
+                else:
+                    erro_msg = f"⚠️ Ocorreu um erro inesperado: {erro_str}"
+                    
                 st.error(erro_msg)
                 st.session_state.messages.append({"role": "assistant", "content": erro_msg})
