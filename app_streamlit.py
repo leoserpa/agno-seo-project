@@ -141,52 +141,39 @@ if prompt:
                 resposta_completa = ""
                 
                 # ==========================================================
-                # FUNÇÃO GERADORA DE DELTAS PARA O STREAMLIT
-                # Resolve o problema de "Engolir Palavras" e "Repetir o Texto Todo"
-                # durante a troca de contexto entre Orquestrador e Estrategista.
+                # FUNÇÃO DE STREAMING VIA PLACEHOLDER (FULL REPLACE)
+                # Atualizando o quadro de chat por inteiro a cada tick para evitar 
+                # bugs de duplicação quando o Orquestrador passa para o Estrategista
                 # ==========================================================
-                def iterar_novas_palavras(stream):
-                    texto_anterior = ""
-                    for chunk in stream:
-                        chunk_str = str(chunk)
+                
+                msg_placeholder = st.empty()
+                texto_tela = ""
+                
+                for chunk in stream_response:
+                    chunk_str = str(chunk)
+                    
+                    # Intercepta falhas silenciosas da API (JSON de Erro 429)
+                    if "429" in chunk_str and ("Quota exceeded" in chunk_str or "RESOURCE_EXHAUSTED" in chunk_str or "rate limit" in chunk_str.lower()):
+                        raise Exception("API_QUOTA_EXCEEDED")
                         
-                        # Intercepta falhas silenciosas da API (JSON de Erro 429)
-                        if "429" in chunk_str and ("Quota exceeded" in chunk_str or "RESOURCE_EXHAUSTED" in chunk_str or "rate limit" in chunk_str.lower()):
-                            raise Exception("API_QUOTA_EXCEEDED")
-                            
-                        texto_atual = ""
+                    texto_atual = ""
+                    # Busca o texto na propriedade 'content'
+                    if hasattr(chunk, "content") and isinstance(chunk.content, str):
+                        texto_atual = chunk.content
+                    elif isinstance(chunk, str):
+                        texto_atual = chunk
                         
-                        # Busca o texto na propriedade 'content' ou assume se for string
-                        if hasattr(chunk, "content") and isinstance(chunk.content, str):
-                            texto_atual = chunk.content
-                        elif isinstance(chunk, str):
-                            texto_atual = chunk
-                            
-                        # Filtros de sujeira de log de sistema: 
-                        # Se não tem texto ou se é log de sistema, ignora
-                        if not texto_atual or "completed in" in texto_atual or texto_atual.startswith("Running:") or texto_atual.startswith("web_search"):
-                            continue
-                            
-                        # PROTEÇÃO CONTRA A "SÍNDROME DE RESET DO ORQUESTRADOR"
-                        # Quando o Agno passa a bola de um Agente pro Outro no meio do stream,
-                        # ele apaga as variáveis e o texto recomeça.
-                        # Se a string recomeçar (ex: "Estratégia" não bater com "Ola Sou Estrategista"), zeramos a métrica!
-                        if len(texto_anterior) > 0 and len(texto_atual) > 0:
-                            # Se as primeiras 10 letras do texto atual NÃO batem com o começo do que guardamos,
-                            # significa que o agente "limpou" o buffer enviando um bloco totalmente diferente.
-                            # Para não cortarmos o meio da palavra, resetamos a âncora.
-                            prefix_len = min(10, len(texto_anterior), len(texto_atual))
-                            if texto_atual[:prefix_len] != texto_anterior[:prefix_len]:
-                                texto_anterior = "" 
+                    # Filtra sujeira de sistema
+                    if not texto_atual or "completed in" in texto_atual or texto_atual.startswith("Running:") or texto_atual.startswith("web_search"):
+                        continue
                         
-                        # Calcula a matemática: "O que chegou de letra nova que não tínhamos exibido antes?"
-                        if len(texto_atual) > len(texto_anterior):
-                            delta_visivel = texto_atual[len(texto_anterior):]
-                            texto_anterior = texto_atual
-                            yield delta_visivel
-
-                # O st.write_stream cuida da animação de digitação de geradores do python!
-                resposta_completa = st.write_stream(iterar_novas_palavras(stream_response))
+                    # Atualiza o painel gráfico com o conteúdo consolidado até o momento
+                    texto_tela = texto_atual
+                    msg_placeholder.markdown(texto_tela + " ▍")
+                    
+                # Fixar o texto final (remove o cursor)
+                msg_placeholder.markdown(texto_tela)
+                resposta_completa = texto_tela
 
                 # Adiciona botão de exportar imediatamente abaixo da nova mensagem gerada
                 st.download_button(
