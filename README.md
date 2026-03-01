@@ -1,5 +1,7 @@
 # 🤖 Agência de Marketing Digital com IA
 
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://agno-marketing-ai-akm3k8ohwvnzfruzcusbj8.streamlit.app/)
+
 Assistente inteligente e autônomo com **5 agentes especializados** em Marketing Digital e SEO, construído com o poderoso framework **[Agno](https://agno.com)** e interface moderna em **[Streamlit](https://streamlit.io)**.
 
 ## 💼 A Equipe de Agentes
