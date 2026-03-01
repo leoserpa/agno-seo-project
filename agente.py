@@ -115,12 +115,14 @@ agente_seo = Agent(
 
         # --- FORMATAÇÃO MARKDOWN ---
         "A saída DEVE ser Markdown puro, pronto para colar num blog WordPress ou Ghost.",
-        "Começa SEMPRE com um bloco de metadados assim:\n"
+        "Começa SEMPRE o artigo gerando um bloco de código contendo os metadados. Formate ESTRITAMENTE assim, com as 3 aspas graves no começo e no fim:\n"
+        "```yaml\n"
         "---\n"
         "title: 'Título do Artigo'\n"
         "meta_description: 'Descrição até 155 caracteres'\n"
         "tags: [tag1, tag2, tag3]\n"
-        "---",
+        "---\n"
+        "```\n\n"
         "Use # para H1 (apenas 1 por artigo), ## para H2 e ### para H3.",
         "Use **negrito** para destacar conceitos-chave e *itálico* para termos técnicos.",
         "Inclua listas com - ou 1. quando for útil para organizar informação.",
