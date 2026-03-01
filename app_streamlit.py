@@ -142,39 +142,42 @@ if prompt:
                 
                 # ==========================================================
                 # FUNÇÃO GERADORA DE DELTAS PARA O STREAMLIT
-                # O modo Team do Agno envia o texto *acumulado* a cada tick 
+                # O Agno emite pedaços puros (deltas) ao longo do processamento
+                # e no finalzinho emite 1 objeto contendo o texto inteiro repetido.
                 # ==========================================================
                 def iterar_novas_palavras(stream):
-                    texto_anterior = ""
+                    acumulado = ""
                     for chunk in stream:
                         # Intercepta falhas silenciosas da API (JSON de Erro 429)
                         chunk_str = str(chunk)
                         if "429" in chunk_str and ("Quota exceeded" in chunk_str or "RESOURCE_EXHAUSTED" in chunk_str or "rate limit" in chunk_str.lower()):
                             raise Exception("API_QUOTA_EXCEEDED")
                             
-                        # O foco é APENAS o conteúdo de fala do Assistente. 
-                        # Ignoramos strings e arrays soltos porque são logs das Ferramentas (DuckDuckGoTools)
-                        if not hasattr(chunk, "content") or not isinstance(chunk.content, str):
+                        texto_atual = ""
+                        # O foco é APENAS o conteúdo de fala (deltas)
+                        if hasattr(chunk, "content") and isinstance(chunk.content, str):
+                            texto_atual = chunk.content
+                        elif isinstance(chunk, str):
+                            texto_atual = chunk
+                            
+                        if not texto_atual:
                             continue
                             
-                        texto_atual = chunk.content
-                        
-                        # Se por algum motivo o Agno injetar string de ferramenta no content, ignora.
-                        if "completed in" in texto_atual and "s." in texto_atual:
+                        # Ignora os textos injetados por ferramentas de background do Agno
+                        if "completed in" in texto_atual and ("s." in texto_atual or "ms." in texto_atual):
+                            continue
+                        if texto_atual.startswith("Running:") or texto_atual.startswith("web_search"):
                             continue
                             
-                        # Só emite a "diferença" se o texto atual for maior
-                        if len(texto_atual) > len(texto_anterior):
+                        # PROTEÇÃO ANTI-REPETIÇÃO GIGANTE: 
+                        # O Agno sempre emite o texto TODO pronto no último pulso do stream.
+                        # Sabemos que é o pulso final se o "texto novo" for gigante e idêntico ao que já acumulamos.
+                        if len(acumulado) > 30 and len(texto_atual) >= len(acumulado) and texto_atual.startswith(acumulado[:20]):
+                            continue # Ignora, pois já exibimos isso tudo com os deltas anteriores!
                             
-                            # PROTEÇÃO ANTI-CORTE: Se o "texto_atual" recomeçou (ex: Orquestrador passou pro Estrategista), 
-                            # a base das strings não baterá. Se simplesmente cortarmos por len(), engole o começo da frase!
-                            if len(texto_anterior) > 0 and not texto_atual.startswith(texto_anterior[:15]):
-                                # Ocorreu uma troca de locutor interna no Agno (contexto resetou)!
-                                texto_anterior = "" # Reseta a âncora para não cortar palavras do novo locutor
-                                
-                            delta = texto_atual[len(texto_anterior):]
-                            texto_anterior = texto_atual
-                            yield delta
+                        # Acumula na memória e joga o delta pro efeito de digitação do Streamlit
+                        acumulado += texto_atual
+                        yield texto_atual
 
                 # O st.write_stream cuida da animação de digitação de geradores do python!
                 resposta_completa = st.write_stream(iterar_novas_palavras(stream_response))
