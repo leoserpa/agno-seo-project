@@ -60,7 +60,7 @@ Se quiser rodar os agentes no seu próprio computador:
 1. **Clone o repositório:**
 ```bash
 git clone https://github.com/leoserpa/agno-marketing-ai.git
-cd agno-seo-agent
+cd agno-marketing-ai
 ```
 
 2. **Configure suas Chaves de API:**
